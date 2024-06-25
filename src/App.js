@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchNews } from './redux/actions';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NewsList from './components/NewsList';
+import NewsDetail from './components/NewsDetail';
 
-function App() {
+const App = () => {
+  const dispatch = useDispatch();
+  const news = useSelector((state) => state.news);
+  const loading = useSelector((state) => state.loading);
+  const error = useSelector((state) => state.error);
+
+  useEffect(() => {
+    dispatch(fetchNews());
+  }, [dispatch]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <h1>Hacker News</h1>
+        {loading && <p>Loading...</p>}
+        {error && <p>{error}</p>}
+        <Routes>
+          <Route path="/" element={<NewsList news={news} />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
+        </Routes>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
